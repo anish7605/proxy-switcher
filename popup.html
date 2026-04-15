@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Simple Proxy Switcher</title>
+  <title>Proxy Switcher</title>
   <style>
     :root {
       --primary: #0066ff;
@@ -177,6 +177,25 @@
       border: none;
     }
 
+    .proxy-item {
+    position: relative;
+    padding-right: 70px; /* space for buttons */
+  }
+
+  .actions {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    gap: 6px;
+  }
+
+  .actions button {
+    padding: 4px 10px;
+    font-size: 12px;
+    border-radius: 6px;
+  }
+
     .empty-state {
       text-align: center;
       padding: 60px 20px;
@@ -188,7 +207,7 @@
 <body>
   <header>
     <span>🔀</span>
-    <span>Simple Proxy Switcher</span>
+    <span>Proxy Switcher</span>
   </header>
 
   <div class="container">
@@ -204,9 +223,12 @@
   <button id="add-btn" class="add-btn">+</button>
 
   <!-- Add Proxy Modal -->
+  <!-- Inside the modal -->
   <div id="add-modal" class="modal">
     <div class="modal-content">
-      <h3>Add New Proxy</h3>
+      <h3 id="modal-title">Add New Proxy</h3>
+      
+      <input type="hidden" id="edit-index" value="-1">
       
       <input type="text" id="proxy-name" placeholder="Proxy Name (e.g. Residential US)">
       <input type="text" id="proxy-host" placeholder="Host or IP Address">
@@ -221,7 +243,7 @@
 
       <div class="modal-buttons">
         <button id="cancel-btn">Cancel</button>
-        <button id="save-btn" class="btn-primary">Add Proxy</button>
+        <button id="save-btn" class="btn-primary">Save Proxy</button>
       </div>
     </div>
   </div>

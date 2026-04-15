@@ -1,6 +1,6 @@
 let currentProxy = null;
 
-// Listen for auth requests (for proxies with username:password)
+// Proxy authentication support
 chrome.webRequest.onAuthRequired.addListener(
   (details, callback) => {
     if (currentProxy && currentProxy.username && currentProxy.password) {
@@ -18,41 +18,46 @@ chrome.webRequest.onAuthRequired.addListener(
   ["asyncBlocking"]
 );
 
-// Function to apply proxy
+// Set proxy or Direct
 async function setProxy(proxyConfig) {
   currentProxy = proxyConfig;
 
-  let config = { mode: "direct" };
+  const config = proxyConfig && proxyConfig.host ? {
+    mode: "fixed_servers",
+    rules: {
+      singleProxy: {
+        scheme: proxyConfig.scheme || "http",
+        host: proxyConfig.host,
+        port: parseInt(proxyConfig.port)
+      },
+      bypassList: ["<local>"]
+    }
+  } : { mode: "direct" };
 
-  if (proxyConfig && proxyConfig.host) {
-    const scheme = proxyConfig.scheme || "http";
-
-    config = {
-      mode: "fixed_servers",
-      rules: {
-        singleProxy: {
-          scheme: scheme,
-          host: proxyConfig.host,
-          port: parseInt(proxyConfig.port)
-        },
-        bypassList: proxyConfig.bypass || ["<local>"]
-      }
-    };
-  }
-
-  await chrome.proxy.settings.set({
-    value: config,
-    scope: "regular"
-  });
-
+  await chrome.proxy.settings.set({ value: config, scope: "regular" });
   console.log("Proxy set to:", proxyConfig ? `${proxyConfig.host}:${proxyConfig.port}` : "Direct");
 }
 
 // Load saved proxy on startup
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.storage.local.get("currentProxy", (data) => {
-    if (data.currentProxy) {
-      setProxy(data.currentProxy);
-    }
-  });
+chrome.runtime.onStartup.addListener(async () => {
+  const data = await chrome.storage.local.get('currentProxy');
+  if (data.currentProxy) {
+    setProxy(data.currentProxy);
+  }
+});
+
+chrome.runtime.onInstalled.addListener(async () => {
+  const data = await chrome.storage.local.get('currentProxy');
+  if (data.currentProxy) {
+    setProxy(data.currentProxy);
+  }
+});
+
+// Listen for messages from popup
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "setProxy") {
+    setProxy(message.proxy);
+    sendResponse({ success: true });
+  }
+  return true;
 });
