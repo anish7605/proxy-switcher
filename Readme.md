@@ -11,3 +11,6 @@
     - Proxy Protocol: htt:p
 - Verify traffic geting proxied to burp.
 
+<br />
+
+<img src="proxy.png" width="400" height="400">
