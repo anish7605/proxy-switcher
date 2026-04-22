@@ -14,3 +14,10 @@
 <br />
 
 <img src="proxy.png" width="400" height="400">
+
+### more next plugins
+
+- cookie-editor
+- wrapper around mozilla firefox tools like the network tab or something similar.
+
+publish it somewhere, maybe on freemium.
