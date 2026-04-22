@@ -19,5 +19,7 @@
 
 - cookie-editor
 - wrapper around mozilla firefox tools like the network tab or something similar.
+- modify device size for testing purposes.
+- change theme
 
 publish it somewhere, maybe on freemium.
